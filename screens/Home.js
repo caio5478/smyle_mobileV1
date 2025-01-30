@@ -1,13 +1,17 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
-import styles from './css/styles';
-import api from './services/api';
+import { styles } from '../css/styles';
+import api from '../services/api';
+import { useNavigation } from '@react-navigation/native';
 
-const App = () => {
+
+const Home = () => {
+  const navigation = useNavigation()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [data, setData] = useState(null); // Estado para armazenar dados do backend
   const [error, setError] = useState(null); // Estado para armazenar erros
+
 
   useEffect(() => {
     // Função para buscar dados do backend
@@ -17,35 +21,36 @@ const App = () => {
         setData(response.data);
       } catch (err) {
         setError(error);
-        console.error("Erro ao buscar dados:");
       }
     };
     fetchData();
   }, []);
 
- // Função para lidar com o login
- const handleLogin = async () => {
-  if (!email || !password) {
-    Alert.alert("Erro", "Por favor, preencha todos os campos.");
-    return;
-  }
-
-  try {
-    const response = await api.post("/login", { email, password });
-    Alert.alert("Login", `Bem-vindo, ${response.data.user}!`);
-  } catch (error) {
-    Alert.alert( "Erro ao realizar login.");
-    console.error("Erro no login:", error);
-  }
-};
+  // Função para lidar com o login
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Erro", "Por favor, preencha todos os campos.");
+      return;
+    }
+    try {
+      const response = await api.post("/login", { email, password });
+      if (response.data.token) {
+        Alert.alert("Login", `Bem-vindo, ${response.data.user}!`);
+        navigation.navigate("Perfil");
+      } else {
+        Alert.alert("Erro", "Usuário não encontrado ou credenciais inválidas.");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <View style={styles.container}>
-         <Image
-        source={require('./assets/logo.png')} // caminho para sua logo
+      <Image
+        source={require('../assets/logo.png')} // caminho para sua logo
         style={styles.logo}
       />
-      
       <TextInput
         style={styles.input}
         placeholder="Digite seu e-mail"
@@ -62,9 +67,14 @@ const App = () => {
       <TouchableOpacity style={styles.button} onPress={() => handleLogin()}>
         <Text style={styles.buttonText}>Entrar</Text>
       </TouchableOpacity>
-      <Text style={styles.registerText}>Criar uma conta</Text>
+      <TouchableOpacity style={styles.buttonSenha}>
+        <Text style={styles.buttonTextSenha}>Esqueci minha senha</Text>
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <Text style={styles.criarConta}>Criar conta</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
-export default App;
+export default Home;
