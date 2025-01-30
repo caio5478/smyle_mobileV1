@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
 import { styles } from '../css/styles';
 import api from '../services/api';
 import { useNavigation } from '@react-navigation/native';
@@ -9,9 +9,9 @@ const Home = () => {
   const navigation = useNavigation()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [data, setData] = useState(null); // Estado para armazenar dados do backend
+  const [setData] = useState(null); // Estado para armazenar dados do backend
   const [error, setError] = useState(null); // Estado para armazenar erros
-
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // Função para buscar dados do backend
@@ -28,6 +28,7 @@ const Home = () => {
 
   // Função para lidar com o login
   const handleLogin = async () => {
+    setLoading(true);
     if (!email || !password) {
       Alert.alert("Erro", "Por favor, preencha todos os campos.");
       return;
@@ -35,7 +36,10 @@ const Home = () => {
     try {
       const response = await api.post("/login", { email, password });
       if (response.data.token) {
-        Alert.alert("Login", `Bem-vindo, ${response.data.user}!`);
+        setTimeout(()=>{
+          setLoading(false);
+          alert('Login realizado com sucesso!');
+        }, 3000);
         navigation.navigate("Perfil");
       } else {
         Alert.alert("Erro", "Usuário não encontrado ou credenciais inválidas.");
@@ -64,8 +68,12 @@ const Home = () => {
         value={password}
         onChangeText={(text) => setPassword(text)}
       />
-      <TouchableOpacity style={styles.button} onPress={() => handleLogin()}>
-        <Text style={styles.buttonText}>Entrar</Text>
+      <TouchableOpacity style={styles.button} onPress={() => handleLogin()} disabled={loading} >
+      {loading ? (
+          <ActivityIndicator size="small" color="#FFFFFF"/>
+        ) : (
+          <Text style={styles.buttonText}>Entrar</Text>
+        )}
       </TouchableOpacity>
       <TouchableOpacity style={styles.buttonSenha}>
         <Text style={styles.buttonTextSenha}>Esqueci minha senha</Text>

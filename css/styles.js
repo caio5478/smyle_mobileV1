@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     alignItems: 'center',
-    marginVertical: 30
+    marginVertical: 80
   },
   criarConta: {
     color: '#407AE5',
