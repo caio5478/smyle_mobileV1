@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
-import { styles } from '../css/styles';
+import { styles } from '../styles/styles';
 import api from '../services/api';
 import { useNavigation } from '@react-navigation/native';
 
@@ -40,7 +40,7 @@ const Home = () => {
           setLoading(false);
           alert('Login realizado com sucesso!');
         }, 3000);
-        navigation.navigate("Perfil");
+        navigation.navigate("App");
       } else {
         Alert.alert("Erro", "Usuário não encontrado ou credenciais inválidas.");
       }

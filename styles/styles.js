@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   criarConta: {
     color: '#407AE5',
     fontWeight: 'bold',
-  }
+  },
 });
 
 export {styles}; 
